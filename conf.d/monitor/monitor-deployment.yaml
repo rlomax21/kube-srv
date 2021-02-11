@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: monitor
+  name: monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: monitor
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: monitor
+    spec:
+      containers:
+        - image: hashberg/kubechk:latest
+          name: monitor
+          volumeMounts:
+            - name: www
+              mountPath: /var/www/
+      restartPolicy: Always
+      volumes:
+        - name: www
+          persistentVolumeClaim:
+            claimName: nginx

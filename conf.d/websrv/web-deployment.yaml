@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: nginx
+  name: nginx
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      service: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: nginx
+    spec:
+      containers:
+        - image: hashberg/nginweb:latest
+          name: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: www
+              mountPath: /var/www
+      initContainers:
+        - image: hashberg/nginweb:latest
+          name: init-html
+          volumeMounts:
+            - name: www
+              mountPath: /var/www
+          command: ["sh","-c","printf '<!DOCTYPE HTML>\n<html>\n  <head>\n    <title>\n      Web Service\n    </title>\n  </head>\n  <body>\n\n  </body>\n</html>' > /var/www/index.html"]
+      restartPolicy: Always
+      volumes:
+        - name: www
+          persistentVolumeClaim:
+            claimName: nginx

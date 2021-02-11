@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    service: nginx
+  name: nginx
+spec:
+  storageClassName: app
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 512Mi
+  hostPath:
+    path: /var/tmp/app/www/
+    type: DirectoryOrCreate
